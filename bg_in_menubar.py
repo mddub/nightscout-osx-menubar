@@ -102,6 +102,7 @@ def configuration_window(sender):
     response = window.run()
     if response.clicked == 1:
         config.set_host(response.text.strip())
+        update_data(None)
 
 if __name__ == "__main__":
     app = rumps.App('Nightscout Menubar', title='loading...')
