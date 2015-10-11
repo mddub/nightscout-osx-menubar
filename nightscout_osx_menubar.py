@@ -61,7 +61,7 @@ def update_menu(title, items):
 def last_updated_menu_items():
     return [
         None,
-        "Updated %s" % datetime.now().strftime("%a %H:%M %p"),
+        "Updated %s" % datetime.now().strftime("%a %-I:%M %p"),
     ]
 
 def post_history_menu_options():
