@@ -6,10 +6,6 @@ from datetime import datetime
 import requests
 import rumps
 import simplejson
-from dateutil.parser import parser
-from dateutil.tz import tzlocal
-
-date_parser = parser()
 
 NIGHTSCOUT_URL = '/api/v1/entries.json?count=100'
 UPDATE_FREQUENCY_SECONDS = 20
@@ -23,8 +19,7 @@ MAX_BAD_REQUEST_ATTEMPTS = 3
 MENUBAR_TEXT = "{sgv} ({direction}) [{time_ago}]"
 MENU_ITEM_TEXT = "{sgv} [{time_ago}]"
 
-def time_ago(date_str):
-    seconds = int((datetime.now().replace(tzinfo=tzlocal()) - date_parser.parse(date_str)).total_seconds())
+def time_ago(seconds):
     if seconds >= 3600:
         return "%s hr" % (seconds / 3600)
     elif seconds >= 60:
@@ -101,25 +96,28 @@ def get_entries(retries=0, last_exception=None):
 def filter_bgs(entries):
     return filter(lambda e: e['type'] == 'sgv', entries)
 
+def seconds_ago(timestamp):
+    return int(datetime.now().strftime('%s')) - timestamp / 1000
+
 def get_menubar_text(entries):
     bgs = filter_bgs(entries)
     last, second_to_last = bgs[0:2]
-    if (date_parser.parse(last['dateString']) - date_parser.parse(second_to_last['dateString'])).total_seconds() <= MAX_SECONDS_TO_SHOW_DELTA:
+    if (last['date'] - second_to_last['date']) / 1000 <= MAX_SECONDS_TO_SHOW_DELTA:
         direction = ('+' if last['sgv'] >= second_to_last['sgv'] else '') + str(last['sgv'] - second_to_last['sgv'])
     else:
         direction = '?'
     return MENUBAR_TEXT.format(
         sgv=last['sgv'],
         direction=direction,
-        time_ago=time_ago(last['dateString']),
+        time_ago=time_ago(seconds_ago(last['date'])),
     )
 
 def get_history_menu_items(entries):
     return [
         MENU_ITEM_TEXT.format(
             sgv=e['sgv'],
-            time_ago=time_ago(e['dateString'],
-        ))
+            time_ago=time_ago(seconds_ago(e['date'])),
+        )
         for e in filter_bgs(entries)[1:HISTORY_LENGTH + 1]
     ]
 
