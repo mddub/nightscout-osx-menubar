@@ -67,7 +67,7 @@ def last_updated_menu_items():
 def post_history_menu_options():
     return [
         None,
-        rumps.MenuItem('Configuration', callback=configuration_window),
+        rumps.MenuItem('Configure...', callback=configuration_window),
         None,
     ]
 
@@ -94,7 +94,7 @@ def get_entries(retries=0, last_exception=None):
         return get_entries(retries + 1, "Nightscout returned bad JSON")
 
 def filter_bgs(entries):
-    return filter(lambda e: e['type'] == 'sgv', entries)
+    return filter(lambda e: e.get('type') == 'sgv', entries)
 
 def seconds_ago(timestamp):
     return int(datetime.now().strftime('%s')) - timestamp / 1000
@@ -131,8 +131,8 @@ def update_data(sender):
         try:
             update_menu(get_menubar_text(entries), get_history_menu_items(entries))
         except Exception, e:
-            print "Error parsing Nightscout data: %s %s " % (e, simplejson.dumps(entries))
-            update_menu("<Bad Nightscout data!>", [])
+            print "Error parsing Nightscout data: %s %s" % (repr(e), simplejson.dumps(entries))
+            update_menu("<Bad Nightscout data!>", [repr(e)])
 
 def configuration_window(sender):
     window = rumps.Window(
