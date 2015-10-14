@@ -11,13 +11,12 @@ View CGM data from [Nightscout] in the OS X menu bar.
 
 ## Installation
 
-Using `pip` + `virtualenv`:
+Using `pip`:
 
 ```
 git clone https://github.com/mddub/nightscout-osx-menubar
 cd nightscout-osx-menubar
-virtualenv venv && . venv/bin/activate
-pip install -r requirements.txt  # This may take a while
+pip install -r requirements.txt --user  # This may take a while
 python nightscout_osx_menubar.py &
 ```
 
