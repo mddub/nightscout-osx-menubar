@@ -11,6 +11,7 @@ APP = ['nightscout_osx_menubar.py']
 DATA_FILES = []
 OPTIONS = {
     'argv_emulation': True,
+    'iconfile': 'ns-icon.icns',
     'packages': [
         'requests',
         'rumps',
