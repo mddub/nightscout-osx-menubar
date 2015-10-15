@@ -99,7 +99,7 @@ def get_entries(retries=0, last_exception=None):
 def filter_bgs(entries):
     bgs = [e.copy() for e in entries if 'sgv' in e]
     for bg in bgs:
-        bg.update({'sgv': int(bg['sgv'])})
+        bg['sgv'] = int(bg['sgv'])
     return bgs
 
 def seconds_ago(timestamp):
