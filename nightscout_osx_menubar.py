@@ -79,7 +79,7 @@ def get_entries(retries=0, last_exception=None):
     try:
         resp = requests.get(config.get_host() + NIGHTSCOUT_URL)
     except requests.exceptions.ConnectionError, e:
-        return get_entries(retries + 1, "Connection error")
+        return get_entries(retries + 1, repr(e))
 
     if resp.status_code != 200:
         return get_entries(retries + 1, "Nightscout returned status %s" % resp.status_code)
@@ -126,13 +126,13 @@ def update_data(sender):
     try:
         entries = get_entries()
     except NightscoutException, e:
-        update_menu("<Can't connect to Nightscout!>", [e.message])
+        update_menu("<Can't connect to Nightscout!>", [e.message[:100]])
     else:
         try:
             update_menu(get_menubar_text(entries), get_history_menu_items(entries))
         except Exception, e:
             print "Error parsing Nightscout data: %s %s" % (repr(e), simplejson.dumps(entries))
-            update_menu("<Bad Nightscout data!>", [repr(e)])
+            update_menu("<Bad Nightscout data!>", [repr(e)[:100]])
 
 def configuration_window(sender):
     window = rumps.Window(
