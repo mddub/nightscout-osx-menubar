@@ -77,7 +77,9 @@ def get_entries(retries=0, last_exception=None):
         raise NightscoutException(last_exception)
 
     try:
-        resp = requests.get(config.get_host() + NIGHTSCOUT_URL)
+        # For the sake of keeping this portable without adding a lot of complexity, don't verify SSL certificates.
+        # https://github.com/kennethreitz/requests/issues/557
+        resp = requests.get(config.get_host() + NIGHTSCOUT_URL, verify=False)
     except requests.exceptions.ConnectionError, e:
         return get_entries(retries + 1, repr(e))
 
