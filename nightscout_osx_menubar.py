@@ -13,6 +13,7 @@ UPDATE_FREQUENCY_SECONDS = 20
 MAX_SECONDS_TO_SHOW_DELTA = 600
 HISTORY_LENGTH = 5
 MAX_BAD_REQUEST_ATTEMPTS = 3
+REQUEST_TIMEOUT_SECONDS = 2
 
 ################################################################################
 # Display options
@@ -78,10 +79,20 @@ def get_entries(retries=0, last_exception=None):
         raise NightscoutException(last_exception)
 
     try:
-        # For the sake of keeping this portable without adding a lot of complexity, don't verify SSL certificates.
-        # https://github.com/kennethreitz/requests/issues/557
-        resp = requests.get(config.get_host() + NIGHTSCOUT_URL, verify=False)
-    except requests.exceptions.ConnectionError, e:
+        resp = requests.get(
+            config.get_host() + NIGHTSCOUT_URL,
+            # For the sake of keeping this portable without adding a lot of complexity, don't verify SSL certificates.
+            # https://github.com/kennethreitz/requests/issues/557
+            verify=False,
+            # Don't let bad connectivity cause the app to freeze
+            timeout=REQUEST_TIMEOUT_SECONDS,
+        )
+    except requests.exceptions.Timeout, e:
+        # Don't retry timeouts, since the app is unresponsive while a request is in progress,
+        # and a new request will be made in UPDATE_FREQUENCY_SECONDS seconds anyway.
+        print "Timed out: %s" % repr(e)
+        raise NightscoutException(repr(e))
+    except requests.exceptions.RequestException, e:
         return get_entries(retries + 1, repr(e))
 
     if resp.status_code != 200:
