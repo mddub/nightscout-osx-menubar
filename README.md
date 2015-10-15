@@ -20,7 +20,7 @@ View CGM data from [Nightscout] in the OS X menu bar.
 
 This uses [rumps], which provides a nice interface to PyObjC to create simple menu bar apps, and [py2app], a Python setuptools command which allows you to package Python scripts as standalone OS X applications.
 
-To run the app in development:
+**To run the app in development:**
 
 ```
 git clone https://github.com/mddub/nightscout-osx-menubar
@@ -29,9 +29,10 @@ pip install -r requirements.txt --user  # This may take a while
 python nightscout_osx_menubar.py
 ```
 
-(We install requirements with `--user` because [rumps is not compatible with virtualenv][rumps-virtualenv]. You could alternatively `sudo pip install`.)
+* Install requirements with `--user` because [rumps is not compatible with virtualenv][rumps-virtualenv]. You could alternatively `sudo pip install`.
+* If this fails, try [installing Xcode Command Line Tools][xcode-cli].
 
-To package the app:
+**To build a standalone app in `dist/`:**
 
 ```
 python setup.py py2app
@@ -57,4 +58,5 @@ This project is intended for educational and informational purposes only. It is 
 [rumps]: https://github.com/jaredks/rumps
 [py2app]: https://pythonhosted.org/py2app/
 [rumps-virtualenv]: https://github.com/jaredks/rumps/issues/9
+[xcode-cli]: http://stackoverflow.com/questions/20929689/git-clone-command-not-working-in-mac-terminal
 [File an issue]: https://github.com/mddub/nightscout-osx-menubar/issues
