@@ -14,6 +14,7 @@ View CGM data from [Nightscout] in the OS X menu bar.
 1. Download [this zip file containing the app][release-zip] and unzip it.
 1. Drag "Nightscout Menubar" into your "Applications" folder.
 1. Run it.
+1. (Optional) To run automatically on startup, go to System Preferences > Users & Groups > Login Items, and add Nightscout Menubar to the list.
 
 ## Development
 
