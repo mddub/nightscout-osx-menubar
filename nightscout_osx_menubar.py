@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 from ConfigParser import ConfigParser
@@ -16,8 +17,8 @@ MAX_BAD_REQUEST_ATTEMPTS = 3
 ################################################################################
 # Display options
 
-MENUBAR_TEXT = "{sgv} ({direction}) [{time_ago}]"
-MENU_ITEM_TEXT = "{sgv} [{time_ago}]"
+MENUBAR_TEXT = u"{sgv} {direction} ({delta}) [{time_ago}]"
+MENU_ITEM_TEXT = u"{sgv} {direction} [{time_ago}]"
 
 def time_ago(seconds):
     if seconds >= 3600:
@@ -104,16 +105,28 @@ def filter_bgs(entries):
 def seconds_ago(timestamp):
     return int(datetime.now().strftime('%s')) - timestamp / 1000
 
+def get_direction(entry):
+    return {
+        'DoubleUp': u'⇈',
+        'SingleUp': u'↑',
+        'FortyFiveUp': u'↗',
+        'Flat': u'→',
+        'FortyFiveDown': u'↘',
+        'SingleDown': u'↓',
+        'DoubleDown': u'⇊',
+    }.get(entry.get('direction'), '-')
+
 def get_menubar_text(entries):
     bgs = filter_bgs(entries)
     last, second_to_last = bgs[0:2]
     if (last['date'] - second_to_last['date']) / 1000 <= MAX_SECONDS_TO_SHOW_DELTA:
-        direction = ('+' if last['sgv'] >= second_to_last['sgv'] else '') + str(last['sgv'] - second_to_last['sgv'])
+        delta = ('+' if last['sgv'] >= second_to_last['sgv'] else '') + str(last['sgv'] - second_to_last['sgv'])
     else:
-        direction = '?'
+        delta = '?'
     return MENUBAR_TEXT.format(
         sgv=last['sgv'],
-        direction=direction,
+        delta=delta,
+        direction=get_direction(last),
         time_ago=time_ago(seconds_ago(last['date'])),
     )
 
@@ -121,6 +134,7 @@ def get_history_menu_items(entries):
     return [
         MENU_ITEM_TEXT.format(
             sgv=e['sgv'],
+            direction=get_direction(e),
             time_ago=time_ago(seconds_ago(e['date'])),
         )
         for e in filter_bgs(entries)[1:HISTORY_LENGTH + 1]
