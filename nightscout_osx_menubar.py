@@ -96,7 +96,10 @@ def get_entries(retries=0, last_exception=None):
         return get_entries(retries + 1, "Nightscout returned bad JSON")
 
 def filter_bgs(entries):
-    return filter(lambda e: e.get('type') == 'sgv', entries)
+    bgs = [e.copy() for e in entries if 'sgv' in e]
+    for bg in bgs:
+        bg.update({'sgv': int(bg['sgv'])})
+    return bgs
 
 def seconds_ago(timestamp):
     return int(datetime.now().strftime('%s')) - timestamp / 1000
