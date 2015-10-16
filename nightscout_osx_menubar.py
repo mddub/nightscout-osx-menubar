@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import traceback
 from ConfigParser import ConfigParser
 from datetime import datetime
 
@@ -153,16 +154,20 @@ def get_history_menu_items(entries):
 
 @rumps.timer(UPDATE_FREQUENCY_SECONDS)
 def update_data(sender):
+    entries = None
     try:
-        entries = get_entries()
-    except NightscoutException, e:
-        update_menu("<Can't connect to Nightscout!>", [e.message[:100]])
-    else:
         try:
+            entries = get_entries()
+        except NightscoutException, e:
+            update_menu("<Can't connect to Nightscout!>", [e.message[:100]])
+        else:
             update_menu(get_menubar_text(entries), get_history_menu_items(entries))
-        except Exception, e:
-            print "Error parsing Nightscout data: %s %s" % (repr(e), simplejson.dumps(entries))
-            update_menu("<Bad Nightscout data!>", [repr(e)[:100]])
+    except Exception, e:
+        print "Nightscout data: " + simplejson.dumps(entries)
+        print repr(e)
+        _, _, tb = sys.exc_info()
+        traceback.print_tb(tb)
+        update_menu("<Error>", [repr(e)[:100]])
 
 def configuration_window(sender):
     window = rumps.Window(
