@@ -54,7 +54,7 @@ This project is intended for educational and informational purposes only. It is 
 
 [Nightscout]: http://www.nightscout.info/
 [cgm-remote-monitor]: https://github.com/nightscout/cgm-remote-monitor
-[release-zip]: https://github.com/mddub/nightscout-osx-menubar/raw/master/release/nightscout-osx-menubar-0.2.1.zip
+[release-zip]: https://github.com/mddub/nightscout-osx-menubar/raw/master/release/nightscout-osx-menubar-0.2.2.zip
 [rumps]: https://github.com/jaredks/rumps
 [py2app]: https://pythonhosted.org/py2app/
 [rumps-virtualenv]: https://github.com/jaredks/rumps/issues/9
