@@ -16,6 +16,22 @@ View CGM data from [Nightscout] in the OS X menu bar.
 1. Run it.
 1. (Optional) To run automatically on startup, go to System Preferences > Users & Groups > Login Items, and add Nightscout Menubar to the list.
 
+## Customization
+
+For now, if you want to customize the display and are comfortable making small edits to a Python file, you can edit [nightscout_osx_menubar.py] within the app package.
+
+In Finder, right-click on the app and click "Show Package Contents". Open `Contents/Resources/nightscout_osx_menubar.py` in a text editor. All the available configuration is at the top of the file.
+
+For example:
+
+* Change `HISTORY_LENGTH` to control the number of history menu items
+* Change `MENUBAR_TEXT` to `u"{sgv} {direction}"` to shorten the menu bar text to only BG and a trend arrow
+* Change `MENU_ITEM_TEXT` to likewise change how the history items are formatted
+* Modify `time_ago` to return strings like "5m" instead of "5 min"
+* etc.
+
+This is not a long-term solution since your modifications won't survive a reinstall of the app. A better configuration system is in the works.
+
 ## Development
 
 This uses [rumps], which provides a nice interface to PyObjC to create simple menu bar apps, and [py2app], a Python setuptools command which allows you to package Python scripts as standalone OS X applications.
@@ -42,7 +58,10 @@ python setup.py py2app
 
 * If an error occurs while running the standalone app, some additional information was probably logged to the Console app (in Applications > Utilities).
 
-* If you're running the app in development, you can get extra debug information from rumps by passing the `--debug` flag: `python nightscout_osx_menubar.py --debug`
+* To view the app's output in the terminal and get extra debug information, start the app from the command line with the `--debug` flag:
+  ```
+  ./Nightscout\ Menubar.app/Contents/MacOS/Nightscout\ Menubar --debug
+  ```
 
 ## Notes
 
@@ -55,8 +74,9 @@ This project is intended for educational and informational purposes only. It is 
 [Nightscout]: http://www.nightscout.info/
 [cgm-remote-monitor]: https://github.com/nightscout/cgm-remote-monitor
 [release-zip]: https://github.com/mddub/nightscout-osx-menubar/raw/master/release/nightscout-osx-menubar-0.2.2.zip
+[nightscout_osx_menubar.py]: https://github.com/mddub/nightscout-osx-menubar/blob/master/nightscout_osx_menubar.py
 [rumps]: https://github.com/jaredks/rumps
 [py2app]: https://pythonhosted.org/py2app/
 [rumps-virtualenv]: https://github.com/jaredks/rumps/issues/9
 [xcode-cli]: http://stackoverflow.com/questions/20929689/git-clone-command-not-working-in-mac-terminal
-[File an issue]: https://github.com/mddub/nightscout-osx-menubar/issues
+[file an issue]: https://github.com/mddub/nightscout-osx-menubar/issues
