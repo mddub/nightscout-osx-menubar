@@ -60,6 +60,7 @@ python setup.py py2app
 
 * To view the app's output in the terminal and get extra debug information, start the app from the command line with the `--debug` flag:
   ```
+  cd /Applications
   ./Nightscout\ Menubar.app/Contents/MacOS/Nightscout\ Menubar --debug
   ```
 
