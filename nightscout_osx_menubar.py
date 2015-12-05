@@ -11,7 +11,7 @@ import rumps
 import simplejson
 
 APP_NAME = 'Nightscout Menubar'
-VERSION = '0.2.2'
+VERSION = '0.3.0'
 PROJECT_HOMEPAGE = 'https://github.com/mddub/nightscout-osx-menubar'
 
 NIGHTSCOUT_URL = '/api/v1/entries.json?count=100'
