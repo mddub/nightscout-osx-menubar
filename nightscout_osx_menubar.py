@@ -190,7 +190,10 @@ def update_data(sender):
         try:
             entries = get_entries()
         except NightscoutException, e:
-            update_menu("<Can't connect to Nightscout!>", [e.message[:100]])
+            if config.get_host():
+                update_menu("<Can't connect to Nightscout!>", [e.message[:100]])
+            else:
+                update_menu("<Set Nightscout URL!>", [])
         else:
             update_menu(get_menubar_text(entries), get_history_menu_items(entries))
     except Exception, e:
