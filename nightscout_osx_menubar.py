@@ -24,8 +24,8 @@ REQUEST_TIMEOUT_SECONDS = 2
 ################################################################################
 # Display options
 
-MENUBAR_TEXT = u"{sgv} {direction} ({delta}) [{time_ago}]"
-MENU_ITEM_TEXT = u"{sgv} {direction} [{time_ago}]"
+MENUBAR_TEXT = u"{sgv} {direction} {delta} [{time_ago}]"
+MENU_ITEM_TEXT = u"{sgv} {direction} {delta} [{time_ago}]"
 
 def time_ago(seconds):
     if seconds >= 3600:
@@ -165,11 +165,14 @@ def get_direction(entry):
         'DoubleDown': u'⇊',
     }.get(entry.get('direction'), '-')
 
+def get_delta(last, second_to_last):
+    return ('+' if last['sgv'] >= second_to_last['sgv'] else u'−') + str(abs(maybe_convert_units(last['sgv'] - second_to_last['sgv'])))
+
 def get_menubar_text(entries):
     bgs = filter_bgs(entries)
     last, second_to_last = bgs[0:2]
     if (last['date'] - second_to_last['date']) / 1000 <= MAX_SECONDS_TO_SHOW_DELTA:
-        delta = ('+' if last['sgv'] >= second_to_last['sgv'] else '') + str(maybe_convert_units(last['sgv'] - second_to_last['sgv']))
+        delta = get_delta(last, second_to_last)
     else:
         delta = '?'
     return MENUBAR_TEXT.format(
@@ -180,14 +183,16 @@ def get_menubar_text(entries):
     )
 
 def get_history_menu_items(entries):
+    bgs = filter_bgs(entries)
     return [
         MENU_ITEM_TEXT.format(
             sgv=maybe_convert_units(e['sgv']),
+            delta=get_delta(e, bgs[i + 1]) if i + 1 < len(bgs) else '?',
             direction=get_direction(e),
             time_ago=time_ago(seconds_ago(e['date'])),
         )
-        for e in filter_bgs(entries)[1:HISTORY_LENGTH + 1]
-    ]
+        for i, e in enumerate(bgs)
+    ][1:HISTORY_LENGTH + 1]
 
 @rumps.timer(UPDATE_FREQUENCY_SECONDS)
 def update_data(sender):
