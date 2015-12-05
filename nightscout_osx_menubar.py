@@ -218,6 +218,7 @@ def configuration_window(sender):
     window = rumps.Window(
         title='Nightscout Menubar Configuration',
         message='Enter your nightscout URL below.\n\nIt probably looks like:\nhttps://SOMETHING.azurewebsites.net',
+        dimensions=(320, 22),
     )
     window.default_text = config.get_host()
     window.add_buttons('Cancel')
