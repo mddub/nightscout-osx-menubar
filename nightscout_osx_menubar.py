@@ -9,6 +9,8 @@ import requests
 import rumps
 import simplejson
 
+APP_NAME = 'Nightscout Menubar'
+
 NIGHTSCOUT_URL = '/api/v1/entries.json?count=100'
 UPDATE_FREQUENCY_SECONDS = 20
 MAX_SECONDS_TO_SHOW_DELTA = 600
@@ -38,6 +40,7 @@ class NightscoutConfig(object):
     FILENAME = 'config'
     SECTION = 'NightscoutMenubar'
     HOST = 'nightscout_host'
+    USE_MMOL = 'use_mmol'
 
     def __init__(self, app_name):
         self.config_path = os.path.join(rumps.application_support(app_name), self.FILENAME)
@@ -47,6 +50,8 @@ class NightscoutConfig(object):
             self.config.add_section(self.SECTION)
         if not self.config.has_option(self.SECTION, self.HOST):
             self.set_host('')
+        if not self.config.has_option(self.SECTION, self.USE_MMOL):
+            self.set_use_mmol(False)
 
     def get_host(self):
         return self.config.get(self.SECTION, self.HOST)
@@ -55,6 +60,19 @@ class NightscoutConfig(object):
         self.config.set(self.SECTION, self.HOST, host)
         with open(self.config_path, 'w') as f:
             self.config.write(f)
+
+    def get_use_mmol(self):
+        return bool(self.config.get(self.SECTION, self.USE_MMOL))
+
+    def set_use_mmol(self, mmol):
+        self.config.set(self.SECTION, self.USE_MMOL, 'true' if mmol else '')
+        with open(self.config_path, 'w') as f:
+            self.config.write(f)
+
+config = NightscoutConfig(APP_NAME)
+
+def maybe_convert_units(mgdl):
+    return round(mgdl / 18.0, 1) if config.get_use_mmol() else mgdl
 
 def update_menu(title, items):
     app.title = title
@@ -68,11 +86,24 @@ def last_updated_menu_items():
     ]
 
 def post_history_menu_options():
-    return [
+    mgdl = rumps.MenuItem('mg/dL', callback=choose_units_mgdl)
+    mgdl.state = not config.get_use_mmol()
+    mmol = rumps.MenuItem('mmol/L', callback=choose_units_mmol)
+    mmol.state = config.get_use_mmol()
+    items = [
         None,
-        rumps.MenuItem('Configure...', callback=configuration_window),
+        [
+            'Settings',
+            [
+                rumps.MenuItem('Set Nightscout URL...', callback=configuration_window),
+                None,
+                mgdl,
+                mmol,
+            ],
+        ],
         None,
     ]
+    return items
 
 def get_entries(retries=0, last_exception=None):
     if retries >= MAX_BAD_REQUEST_ATTEMPTS:
@@ -132,11 +163,11 @@ def get_menubar_text(entries):
     bgs = filter_bgs(entries)
     last, second_to_last = bgs[0:2]
     if (last['date'] - second_to_last['date']) / 1000 <= MAX_SECONDS_TO_SHOW_DELTA:
-        delta = ('+' if last['sgv'] >= second_to_last['sgv'] else '') + str(last['sgv'] - second_to_last['sgv'])
+        delta = ('+' if last['sgv'] >= second_to_last['sgv'] else '') + str(maybe_convert_units(last['sgv'] - second_to_last['sgv']))
     else:
         delta = '?'
     return MENUBAR_TEXT.format(
-        sgv=last['sgv'],
+        sgv=maybe_convert_units(last['sgv']),
         delta=delta,
         direction=get_direction(last),
         time_ago=time_ago(seconds_ago(last['date'])),
@@ -145,7 +176,7 @@ def get_menubar_text(entries):
 def get_history_menu_items(entries):
     return [
         MENU_ITEM_TEXT.format(
-            sgv=e['sgv'],
+            sgv=maybe_convert_units(e['sgv']),
             direction=get_direction(e),
             time_ago=time_ago(seconds_ago(e['date'])),
         )
@@ -182,10 +213,17 @@ def configuration_window(sender):
         config.set_host(response.text.strip())
         update_data(None)
 
+def choose_units_mgdl(sender):
+    config.set_use_mmol(False)
+    update_data(None)
+
+def choose_units_mmol(sender):
+    config.set_use_mmol(True)
+    update_data(None)
+
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == '--debug':
         rumps.debug_mode(True)
-    app = rumps.App('Nightscout Menubar', title='<Connecting to Nightscout...>')
+    app = rumps.App(APP_NAME, title='<Connecting to Nightscout...>')
     app.menu = ['connecting...'] + post_history_menu_options()
-    config = NightscoutConfig(app.name)
     app.run()
