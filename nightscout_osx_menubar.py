@@ -2,6 +2,7 @@
 import os
 import sys
 import traceback
+import webbrowser
 from ConfigParser import ConfigParser
 from datetime import datetime
 
@@ -10,6 +11,8 @@ import rumps
 import simplejson
 
 APP_NAME = 'Nightscout Menubar'
+VERSION = '0.2.2'
+PROJECT_HOMEPAGE = 'https://github.com/mddub/nightscout-osx-menubar'
 
 NIGHTSCOUT_URL = '/api/v1/entries.json?count=100'
 UPDATE_FREQUENCY_SECONDS = 20
@@ -95,10 +98,13 @@ def post_history_menu_options():
         [
             'Settings',
             [
-                rumps.MenuItem('Set Nightscout URL...', callback=configuration_window),
-                None,
                 mgdl,
                 mmol,
+                None,
+                rumps.MenuItem('Set Nightscout URL...', callback=configuration_window),
+                rumps.MenuItem('Help...', callback=open_project_homepage),
+                None,
+                "Version {}".format(VERSION)
             ],
         ],
         None,
@@ -215,6 +221,9 @@ def configuration_window(sender):
     if response.clicked == 1:
         config.set_host(response.text.strip())
         update_data(None)
+
+def open_project_homepage(sender):
+    webbrowser.open_new(PROJECT_HOMEPAGE)
 
 def choose_units_mgdl(sender):
     config.set_use_mmol(False)
