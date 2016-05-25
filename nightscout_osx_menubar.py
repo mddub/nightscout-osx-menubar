@@ -14,7 +14,7 @@ VERSION = '0.3.1'
 APP_NAME = 'Nightscout Menubar'
 PROJECT_HOMEPAGE = 'https://github.com/mddub/nightscout-osx-menubar'
 
-NIGHTSCOUT_URL = '/api/v1/entries.json?count=100'
+SGVS_PATH = '/api/v1/entries/sgv.json?count={count}'
 UPDATE_FREQUENCY_SECONDS = 20
 MAX_SECONDS_TO_SHOW_DELTA = 600
 HISTORY_LENGTH = 5
@@ -118,7 +118,7 @@ def get_entries(retries=0, last_exception=None):
 
     try:
         resp = requests.get(
-            config.get_host() + NIGHTSCOUT_URL,
+            config.get_host() + SGVS_PATH.format(count=(HISTORY_LENGTH + 1)),
             # For the sake of keeping this portable without adding a lot of complexity, don't verify SSL certificates.
             # https://github.com/kennethreitz/requests/issues/557
             verify=False,
