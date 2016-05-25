@@ -29,11 +29,11 @@ MENU_ITEM_TEXT = u"{sgv} {direction} {delta} [{time_ago}]"
 
 def time_ago(seconds):
     if seconds >= 3600:
-        return "%s hr" % (seconds / 3600)
+        return "%sh" % (seconds / 3600)
     elif seconds >= 60:
-        return "%s min" % (seconds / 60)
+        return "%sm" % (seconds / 60)
     else:
-        return "%s sec" % seconds
+        return "%ss" % seconds
 
 ################################################################################
 
@@ -202,9 +202,9 @@ def update_data(sender):
             entries = get_entries()
         except NightscoutException, e:
             if config.get_host():
-                update_menu("<Can't connect to Nightscout!>", [e.message[:100]])
+                update_menu("<?>", [e.message[:100]])
             else:
-                update_menu("<Set Nightscout URL!>", [])
+                update_menu("<Need settings>", [])
         else:
             update_menu(get_menubar_text(entries), get_history_menu_items(entries))
     except Exception, e:
@@ -212,7 +212,7 @@ def update_data(sender):
         print repr(e)
         _, _, tb = sys.exc_info()
         traceback.print_tb(tb)
-        update_menu("<Error>", [repr(e)[:100]])
+        update_menu("<!>", [repr(e)[:100]])
 
 def configuration_window(sender):
     window = rumps.Window(
