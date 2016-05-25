@@ -2,7 +2,7 @@
 
 View CGM data from [Nightscout] in the OS X menu bar.
 
-**Latest version: 0.3.1**
+**Latest version: 0.3.2**
 
 ![nightscout-osx-menubar screenshot](https://raw.githubusercontent.com/mddub/nightscout-osx-menubar/master/screenshot.png)
 
@@ -76,7 +76,7 @@ This project is intended for educational and informational purposes only. It is 
 
 [Nightscout]: http://www.nightscout.info/
 [cgm-remote-monitor]: https://github.com/nightscout/cgm-remote-monitor
-[release-zip]: https://github.com/mddub/nightscout-osx-menubar/raw/master/release/nightscout-osx-menubar-0.3.1.zip
+[release-zip]: https://github.com/mddub/nightscout-osx-menubar/raw/master/release/nightscout-osx-menubar-0.3.2.zip
 [nightscout_osx_menubar.py]: https://github.com/mddub/nightscout-osx-menubar/blob/master/nightscout_osx_menubar.py
 [rumps]: https://github.com/jaredks/rumps
 [py2app]: https://pythonhosted.org/py2app/
