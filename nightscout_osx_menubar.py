@@ -108,6 +108,8 @@ def post_history_menu_options():
             ],
         ],
         None,
+        rumps.MenuItem('Open Nightscout URL...', callback=open_nightscout_url),
+        None,
     ]
     return items
 
@@ -230,6 +232,9 @@ def configuration_window(sender):
 
 def open_project_homepage(sender):
     webbrowser.open_new(PROJECT_HOMEPAGE)
+
+def open_nightscout_url(sender):
+    webbrowser.open_new(config.get_host())
 
 def choose_units_mgdl(sender):
     config.set_use_mmol(False)
