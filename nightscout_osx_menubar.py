@@ -93,6 +93,9 @@ def post_history_menu_options():
     mgdl.state = not config.get_use_mmol()
     mmol = rumps.MenuItem('mmol/L', callback=choose_units_mmol)
     mmol.state = config.get_use_mmol()
+    open_ns_url = rumps.MenuItem('Open Nightscout URL...', callback=None)
+    if config.get_host():
+        open_ns_url.set_callback(open_nightscout_url)
     items = [
         None,
         [
@@ -107,6 +110,8 @@ def post_history_menu_options():
                 "Version {}".format(VERSION)
             ],
         ],
+        None,
+        open_ns_url,
         None,
     ]
     return items
@@ -230,6 +235,9 @@ def configuration_window(sender):
 
 def open_project_homepage(sender):
     webbrowser.open_new(PROJECT_HOMEPAGE)
+
+def open_nightscout_url(sender):
+    webbrowser.open_new(config.get_host())
 
 def choose_units_mgdl(sender):
     config.set_use_mmol(False)
