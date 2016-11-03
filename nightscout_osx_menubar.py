@@ -93,7 +93,7 @@ def post_history_menu_options():
     mgdl.state = not config.get_use_mmol()
     mmol = rumps.MenuItem('mmol/L', callback=choose_units_mmol)
     mmol.state = config.get_use_mmol()
-    open_ns_url = rumps.MenuItem('Open Nightscout URL...', callback=None)
+    open_ns_url = rumps.MenuItem('Open Nightscout site...', callback=None)
     if config.get_host():
         open_ns_url.set_callback(open_nightscout_url)
     items = [
